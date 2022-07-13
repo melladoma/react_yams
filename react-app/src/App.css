@@ -7,11 +7,22 @@
   
 }
 
+
+#last-game{
+  opacity: 0.8;
+  
+}
 #throw-btn{
-  color:rgba(0, 0, 0, 0.7)
+  background-color: #C06C84;
+  border:none;
+}
+#last-game:hover{
+  color:#C06C84;
+  opacity: 0.8;
 }
 
 #throw-btn:hover{
+
   opacity: 0.8;
 }
 

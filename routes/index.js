@@ -7,22 +7,7 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/post-grid', async function (req, res, next) {
-  let result = false
-
-  // OK pour un seul objet Player...
-  // let newPlayer = new PlayerModel({
-  //   player: parseInt(req.body.player),
-  //   score: req.body.score.split(",")
-  // })
-
-  // var playerSaved = await newPlayer.save()
-  // if (playerSaved.player) {
-  //   result = true
-  // }
-  res.json({ result: result })
-});
-
+//ROUTE UPDATE GRID 
 router.post('/update-grid', async function (req, res, next) {
   let result = false
 
@@ -48,4 +33,17 @@ router.post('/update-grid', async function (req, res, next) {
 
   res.json({ result: result })
 });
+
+//ROUTE RECUPERATION DE LA GRILLE
+router.get('/get-grid', async function (req, res, next) {
+  let result = false;
+  let grid = await PlayerModel.find()
+  if (grid.length > 0) {
+    result = true
+  }
+  console.log(grid)
+  res.json({ result: result, grid: grid })
+});
+
+
 module.exports = router;

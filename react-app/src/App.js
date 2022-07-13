@@ -24,19 +24,26 @@ function App() {
 
   let totalList = ["Joueurs", "As", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sous-total", "Prime", "TOTAL I", "Maximum", "Minimum", "TOTAL II", "Brelan", "Carré", "Full", "Petite suite", "Grande Suite", "Yahtzee", "Chance", "TOTAL III", "TOTAL I+II+III"];
 
-  useEffect(() => {
-    async function updateData() {
-      var rawResponse = await fetch('/update-grid', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        body: JSON.stringify(players)
-      })
-      var response = await rawResponse.json()
-      console.log(response)
-    }
-    updateData();
-  }, [players]);
 
+  async function getData() {
+    var rawResponse = await fetch('/get-grid')
+    var response = await rawResponse.json()
+    setPlayers(response.grid)
+  }
+
+  async function updateData() {
+        var rawResponse = await fetch('/update-grid', {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json; charset=UTF-8' },
+          body: JSON.stringify(players)
+        })
+        var response = await rawResponse.json()
+        console.log(response)
+      }
+
+  var getGrid = () => {
+    getData();
+  }
 
   var calcSum = (arr) => {
     let sum = 0;
@@ -114,6 +121,7 @@ function App() {
     }
 
     setPlayers(newScores)
+    updateData();
   }
 
   for (let i = 0; i < 5; i++) {
@@ -138,6 +146,8 @@ function App() {
         </div>
 
         <div>
+        <button  id="last-game" className='btn btn-secondary m-2' onClick={() => getGrid()}>Recharger la dernière partie</button>
+
           <div>
             <button id="throw-btn" className='btn btn-secondary m-2' onClick={() => throwAllDice()}>Lancer les dés</button>
             <h4>{sumCount}</h4>
