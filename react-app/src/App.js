@@ -12,15 +12,16 @@ function App() {
   }
 
   let diceSet = []
-  let randomDiceSet = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1]
+  let iniDiceSet = [0,0,0,0,0]
   let iniCount = [0, 0, 0, 0, 0]
 
-  const [diceDisplay, setDiceDisplay] = useState(randomDiceSet)
+  const [diceDisplay, setDiceDisplay] = useState(iniDiceSet)
   const [diceCount, setDiceCount] = useState(iniCount)
   const [sumCount, setSumCount] = useState(0)
   const [selectedSet, setSelectedSet] = useState([])
   const [content, setContent] = useState('')
   const [players, setPlayers] = useState([{ player: 1, score: [] }, { player: 2, score: [] }])
+  const [throwCount, setThrowCount] = useState(0)
 
   let totalList = ["Joueurs", "As", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sous-total", "Prime", "TOTAL I", "Maximum", "Minimum", "TOTAL II", "Brelan", "Carré", "Full", "Petite suite", "Grande Suite", "Yahtzee", "Chance", "TOTAL III", "TOTAL I+II+III"];
 
@@ -54,8 +55,9 @@ function App() {
   }
 
   function clickDice(diceIndex) {
-    setSelectedSet([...selectedSet, diceIndex])
-
+    if (throwCount > 0 && throwCount < 3){
+      setSelectedSet([...selectedSet, diceIndex])
+    }
     // VERSION ANCIENNE FONCTION : AU CLIC RANDOM NUMBER
     // let diceValue = Math.floor(Math.random() * 6) + 1;
     // let newSet = []
@@ -75,28 +77,32 @@ function App() {
   }
 
   var throwAllDice = () => {
-    let newDisplay = []
-    let newCount = diceCount;
-    diceDisplay.map((x, index) => {
-      var result = selectedSet.find((element) => element === index)
-      if (result !== undefined) {
-        newDisplay.push(x)
-        newCount[index] = newCount[index]
+    if(throwCount < 3){
+      let newDisplay = []
+      let newCount = diceCount;
+      diceDisplay.map((x, index) => {
+        var result = selectedSet.find((element) => element === index)
+        if (result !== undefined) {
+          newDisplay.push(x)
+          newCount[index] = newCount[index]
+        } else {
+          newDisplay.push(Math.floor(Math.random() * 6) + 1)
+          newCount[index] = newCount[index] + 1
+        }
+        return newDisplay
+      })
+      if (newDisplay.filter(x => x === 6).length === 5) {
+        setContent("Bravo")
       } else {
-        newDisplay.push(Math.floor(Math.random() * 6) + 1)
-        newCount[index] = newCount[index] + 1
+        setContent('')
       }
-      return newDisplay
-    })
-    if (newDisplay.filter(x => x === 6).length === 5) {
-      setContent("Bravo")
-    } else {
-      setContent('')
+      setDiceCount(newCount)
+      setDiceDisplay(newDisplay)
+      setSumCount(calcSum(newDisplay))
+      setSelectedSet([])
+      setThrowCount(throwCount+1)
     }
-    setDiceCount(newCount)
-    setDiceDisplay(newDisplay)
-    setSumCount(calcSum(newDisplay))
-    setSelectedSet([])
+    
 
     //Ancienne version : lancer en random de tous les des
     // let newRandom = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1]
@@ -122,6 +128,7 @@ function App() {
 
     setPlayers(newScores)
     updateData();
+    setThrowCount(0)
   }
 
   for (let i = 0; i < 5; i++) {
@@ -140,18 +147,27 @@ function App() {
 
   return (
     <div className="App">
-      <div className="d-flex align-items-center justify-content-center gap-4" style={{ opacity: 0.9 }}>
+      <div className="d-flex justify-content-center gap-4" style={{ opacity: 0.9 }}>
         <div className='border rounded bg-white p-2 m-3'>
           {grid}
         </div>
 
-        <div>
-        <button  id="last-game" className='btn btn-secondary m-2' onClick={() => getGrid()}>Recharger la dernière partie</button>
+        <div className='d-flex flex-column align-items-center'>
+            <button  id="last-game" className='btn btn-secondary m-2 mb-4' onClick={() => getGrid()}>Recharger la dernière partie</button>
 
-          <div>
-            <button id="throw-btn" className='btn btn-secondary m-2' onClick={() => throwAllDice()}>Lancer les dés</button>
-            <h4>{sumCount}</h4>
-          </div>
+            <div className="d-flex">
+                <div className='border px-4'>
+                  <h4 className='text-white'> Lancers</h4>
+                  <h4 className='text-white'>{throwCount}</h4>
+                </div>
+                <div className='px-4 border border-start-0'>
+                  <h4 className='text-white'> Somme</h4>
+                  <h4 className='text-white'>{sumCount}</h4>
+                </div>
+            </div>
+            <button id="throw-btn" className='btn btn-secondary m-2 d-block' onClick={() => throwAllDice()}>Lancer les dés</button>
+
+         
 
           <div className='d-flex justify-content-around flex-wrap border rounded bg-white' style={deck}>
             {diceSet}

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDiceOne, faDiceTwo, faDiceThree, faDiceFour, faDiceFive, faDiceSix } from '@fortawesome/free-solid-svg-icons'
+import { faDiceOne, faDiceTwo, faDiceThree, faDiceFour, faDiceFive, faDiceSix, faDiceD6 } from '@fortawesome/free-solid-svg-icons'
 import { Badge } from 'reactstrap'
 
 export default function Dice(props) {
 
     let iconDice = "";
     switch (props.diceNumber) {
+        case 0:
+            iconDice = faDiceD6
+            break;
         case 1:
             iconDice = faDiceOne
             break;
@@ -24,6 +27,8 @@ export default function Dice(props) {
             break;
         case 6:
             iconDice = faDiceSix
+            break;
+        default:
             break;
     }
     // console.log(typeof iconDice)
