@@ -22,7 +22,7 @@ function App() {
   const [content, setContent] = useState('')
   const [players, setPlayers] = useState([{ player: 1, score: [] }, { player: 2, score: [] }])
   const [throwCount, setThrowCount] = useState(0)
-
+  const [gameName,setGameName]=useState("")
   let totalList = ["Joueurs", "As", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sous-total", "Prime", "TOTAL I", "Maximum", "Minimum", "TOTAL II", "Brelan", "Carré", "Full", "Petite suite", "Grande Suite", "Yahtzee", "Chance", "TOTAL III", "TOTAL I+II+III"];
 
 
@@ -30,6 +30,7 @@ function App() {
     var rawResponse = await fetch('/get-grid')
     var response = await rawResponse.json()
     setPlayers(response.grid)
+    setGameName(response.gameName)
   }
 
   async function updateData() {
@@ -42,6 +43,21 @@ function App() {
         console.log(response)
       }
 
+  async function updateName() {
+        var rawResponse = await fetch('/name-game', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `gameName=${gameName}`
+        })
+        var response = await rawResponse.json()
+        console.log(response)
+      }
+
+
+  var handleSubmitName=()=>{
+  updateName();
+  }
+  
   var getGrid = () => {
     getData();
   }
@@ -148,14 +164,28 @@ function App() {
   return (
     <div className="App">
       <div className="d-flex justify-content-center gap-4" style={{ opacity: 0.9 }}>
-        <div className='border rounded bg-white p-2 m-3'>
+        <div className='border rounded bg-white p-2 m-3 d-flex flex-column align-items-center'>
+          <div className='row'>
+          <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon3">Nom de la partie</span>
+              <input type="text" id="add-on" className="form-control opacity-75" placeholder="Nom de la partie"  onChange={(e) => setGameName(e.target.value)} value={gameName} aria-label="Nom de la partie" aria-describedby="basic-addon2"/>
+              <div className="input-group-append">
+                <button className="btn btn-outline-secondary" type="button" onClick={() => handleSubmitName()}>Renommer</button>
+              </div>
+            </div>
+          </div>
+            
+        {/* <h4 style={{height:"1.5em"}}>{gameName} </h4> */}
           {grid}
         </div>
 
         <div className='d-flex flex-column align-items-center'>
             <button  id="last-game" className='btn btn-secondary m-2 mb-4' onClick={() => getGrid()}>Recharger la dernière partie</button>
+          
+            
 
             <div className="d-flex">
+              
                 <div className='border px-4'>
                   <h4 className='text-white'> Lancers</h4>
                   <h4 className='text-white'>{throwCount}</h4>
