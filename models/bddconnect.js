@@ -1,9 +1,5 @@
 var mongoose = require('mongoose')
-
-var user = 'admin';
-var password = 'adminpwd';
-var port = 55492;
-var bddname = 'yams';
+const env = require("../env")
 
 var options = {
     connectTimeoutMS: 5000,
@@ -11,7 +7,7 @@ var options = {
     useUnifiedTopology: true
 }
 
-mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.x1wn2.mongodb.net/${bddname}?retryWrites=true&w=majority`,
+mongoose.connect(env.bdd_connection_string,
     options,
     function (err) {
         console.log(err);
